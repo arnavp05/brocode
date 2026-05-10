@@ -1,0 +1,99 @@
+# Simple Transformer from Scratch using PyTorch
+
+import torch
+import torch.nn as nn
+
+# ------------------------------------
+# 1. Input Sentence
+# ------------------------------------
+
+# Example input: batch_size=1, sequence_length=4
+x = torch.tensor([[1, 2, 3, 4]])
+
+# ------------------------------------
+# 2. Embedding Layer
+# ------------------------------------
+
+vocab_size = 10
+embed_size = 8
+
+embedding = nn.Embedding(vocab_size, embed_size)
+
+embedded = embedding(x)
+
+print("Embedded Input:\n", embedded)
+
+# ------------------------------------
+# 3. Multihead Attention
+# ------------------------------------
+
+attention = nn.MultiheadAttention(
+    embed_dim=embed_size,
+    num_heads=2,
+    batch_first=True
+)
+
+attention_output, attention_weights = attention(
+    embedded,
+    embedded,
+    embedded
+)
+
+print("\nAttention Output:\n", attention_output)
+
+# ------------------------------------
+# 4. Feed Forward Network
+# ------------------------------------
+
+feed_forward = nn.Sequential(
+    nn.Linear(embed_size, 16),
+    nn.ReLU(),
+    nn.Linear(16, embed_size)
+)
+
+ff_output = feed_forward(attention_output)
+
+print("\nFeed Forward Output:\n", ff_output)
+
+# ------------------------------------
+# 5. Final Transformer Block
+# ------------------------------------
+
+class SimpleTransformer(nn.Module):
+
+    def __init__(self):
+        super(SimpleTransformer, self).__init__()
+
+        self.embedding = nn.Embedding(vocab_size, embed_size)
+
+        self.attention = nn.MultiheadAttention(
+            embed_dim=embed_size,
+            num_heads=2,
+            batch_first=True
+        )
+
+        self.ff = nn.Sequential(
+            nn.Linear(embed_size, 16),
+            nn.ReLU(),
+            nn.Linear(16, embed_size)
+        )
+
+    def forward(self, x):
+
+        x = self.embedding(x)
+
+        attn_output, _ = self.attention(x, x, x)
+
+        output = self.ff(attn_output)
+
+        return output
+
+# ------------------------------------
+# 6. Create Model
+# ------------------------------------
+
+model = SimpleTransformer()
+
+output = model(x)
+
+print("\nFinal Transformer Output:\n", output)

@@ -1,0 +1,147 @@
+# Import libraries
+import pandas as pd
+import nltk
+import string
+
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+
+from sklearn.preprocessing import LabelEncoder
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+# Download required datasets
+nltk.download('stopwords')
+nltk.download('wordnet')
+
+# ---------------------------------------------------
+# Sample Dataset
+# ---------------------------------------------------
+
+data = {
+    "Text": [
+        "I love Natural Language Processing!",
+        "Machine learning is very interesting.",
+        "NLP makes computers understand language."
+    ],
+    
+    "Category": [
+        "Positive",
+        "Positive",
+        "Technology"
+    ]
+}
+
+# Create dataframe
+df = pd.DataFrame(data)
+
+print("Original Data:\n")
+print(df)
+
+# ---------------------------------------------------
+# 1. Text Cleaning
+# ---------------------------------------------------
+
+print("\n\n1. Text Cleaning\n")
+
+def clean_text(text):
+    
+    # Convert to lowercase
+    text = text.lower()
+    
+    # Remove punctuation
+    text = text.translate(str.maketrans('', '', string.punctuation))
+    
+    return text
+
+df['Clean_Text'] = df['Text'].apply(clean_text)
+
+print(df['Clean_Text'])
+
+# ---------------------------------------------------
+# 2. Remove Stop Words
+# ---------------------------------------------------
+
+print("\n\n2. Stop Word Removal\n")
+
+stop_words = set(stopwords.words('english'))
+
+def remove_stopwords(text):
+    
+    words = text.split()
+    
+    filtered_words = [
+        word for word in words
+        if word not in stop_words
+    ]
+    
+    return " ".join(filtered_words)
+
+df['No_Stopwords'] = df['Clean_Text'].apply(remove_stopwords)
+
+print(df['No_Stopwords'])
+
+# ---------------------------------------------------
+# 3. Lemmatization
+# ---------------------------------------------------
+
+print("\n\n3. Lemmatization\n")
+
+lemmatizer = WordNetLemmatizer()
+
+def lemmatize_text(text):
+    
+    words = text.split()
+    
+    lemmatized_words = [
+        lemmatizer.lemmatize(word)
+        for word in words
+    ]
+    
+    return " ".join(lemmatized_words)
+
+df['Lemmatized_Text'] = df['No_Stopwords'].apply(lemmatize_text)
+
+print(df['Lemmatized_Text'])
+
+# ---------------------------------------------------
+# 4. Label Encoding
+# ---------------------------------------------------
+
+print("\n\n4. Label Encoding\n")
+
+encoder = LabelEncoder()
+
+df['Encoded_Label'] = encoder.fit_transform(df['Category'])
+
+print(df[['Category', 'Encoded_Label']])
+
+# ---------------------------------------------------
+# 5. TF-IDF Representation
+# ---------------------------------------------------
+
+print("\n\n5. TF-IDF Representation\n")
+
+tfidf = TfidfVectorizer()
+
+tfidf_matrix = tfidf.fit_transform(df['Lemmatized_Text'])
+
+tfidf_df = pd.DataFrame(
+    tfidf_matrix.toarray(),
+    columns=tfidf.get_feature_names_out()
+)
+
+print(tfidf_df)
+
+# ---------------------------------------------------
+# 6. Save Outputs
+# ---------------------------------------------------
+
+# Save cleaned dataset
+df.to_csv("processed_text_data.csv", index=False)
+
+# Save TF-IDF table
+tfidf_df.to_csv("tfidf_output.csv", index=False)
+
+print("\n\nFiles Saved Successfully!")
+print("1. processed_text_data.csv")
+print("2. tfidf_output.csv")

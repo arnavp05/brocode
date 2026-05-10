@@ -1,0 +1,85 @@
+# Import required libraries
+import nltk
+from nltk.tokenize import word_tokenize, TreebankWordTokenizer
+from nltk.tokenize import TweetTokenizer
+from nltk.tokenize import MWETokenizer
+from nltk.stem import PorterStemmer, SnowballStemmer
+from nltk.stem import WordNetLemmatizer
+import string
+
+# Download required NLTK data
+nltk.download('punkt')
+nltk.download('wordnet')
+
+# Sample text
+text = "Hello! I am learning Natural Language Processing with NLTK."
+
+print("Original Text:")
+print(text)
+
+# ---------------------------------------------------
+# 1. Whitespace Tokenization
+# ---------------------------------------------------
+print("\n1. Whitespace Tokenization:")
+whitespace_tokens = text.split()
+print(whitespace_tokens)
+
+# ---------------------------------------------------
+# 2. Punctuation-based Tokenization
+# ---------------------------------------------------
+print("\n2. Punctuation-based Tokenization:")
+punct_tokens = []
+
+for word in text.split():
+    word = word.strip(string.punctuation)
+    punct_tokens.append(word)
+
+print(punct_tokens)
+
+# ---------------------------------------------------
+# 3. Treebank Tokenization
+# ---------------------------------------------------
+print("\n3. Treebank Tokenization:")
+treebank = TreebankWordTokenizer()
+print(treebank.tokenize(text))
+
+# ---------------------------------------------------
+# 4. Tweet Tokenization
+# ---------------------------------------------------
+print("\n4. Tweet Tokenization:")
+tweet_text = "Awesome day :) #NLP @OpenAI"
+tweet = TweetTokenizer()
+print(tweet.tokenize(tweet_text))
+
+# ---------------------------------------------------
+# 5. MWE (Multi Word Expression) Tokenization
+# ---------------------------------------------------
+print("\n5. MWE Tokenization:")
+mwe_tokenizer = MWETokenizer([('Natural', 'Language')], separator='_')
+
+mwe_text = "I love Natural Language Processing"
+mwe_tokens = mwe_tokenizer.tokenize(mwe_text.split())
+
+print(mwe_tokens)
+
+# ---------------------------------------------------
+# Stemming
+# ---------------------------------------------------
+word = "running"
+
+# Porter Stemmer
+print("\n6. Porter Stemming:")
+porter = PorterStemmer()
+print(porter.stem(word))
+
+# Snowball Stemmer
+print("\n7. Snowball Stemming:")
+snowball = SnowballStemmer("english")
+print(snowball.stem(word))
+
+# ---------------------------------------------------
+# Lemmatization
+# ---------------------------------------------------
+print("\n8. Lemmatization:")
+lemmatizer = WordNetLemmatizer()
+print(lemmatizer.lemmatize("running", pos='v'))

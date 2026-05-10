@@ -1,0 +1,108 @@
+# Morphology using Add-Delete Table in Python
+# BE Practical Program
+
+# --------------------------------------------
+# Function for Morphological Analysis
+# --------------------------------------------
+
+def morphology(word):
+
+    # Dictionary containing rules
+    rules = [
+        
+        # Plural Rules
+        ("cat", "", "s"),
+        ("bus", "", "es"),
+        ("baby", "y", "ies"),
+        ("box", "", "es"),
+
+        # Verb Rules
+        ("play", "", "ing"),
+        ("make", "e", "ing"),
+        ("study", "y", "ied"),
+        ("dance", "e", "ing"),
+
+        # Prefix Rules
+        ("happy", "", "un"),
+        ("legal", "", "il"),
+        ("possible", "", "im")
+    ]
+
+    found = False
+
+    print("\n--------------------------------------------")
+    print("Morphological Analysis using Add-Delete Table")
+    print("--------------------------------------------")
+
+    # Check rules one by one
+    for root, delete_part, add_part in rules:
+
+        if word == root:
+
+            found = True
+
+            # --------------------------------
+            # Apply Delete Operation
+            # --------------------------------
+
+            if delete_part != "":
+                base = word[:-len(delete_part)]
+            else:
+                base = word
+
+            # --------------------------------
+            # Apply Add Operation
+            # --------------------------------
+
+            new_word = base + add_part
+
+            # --------------------------------
+            # Display Table
+            # --------------------------------
+
+            print("\nRoot Word :", word)
+            print("Delete    :", delete_part)
+            print("Add       :", add_part)
+            print("New Word  :", new_word)
+
+            # --------------------------------
+            # Morphological Explanation
+            # --------------------------------
+
+            print("\nMorphological Explanation:")
+
+            if add_part in ["s", "es", "ies"]:
+                print("Plural form generated.")
+
+            elif add_part in ["ing", "ied"]:
+                print("Verb form generated.")
+
+            elif add_part in ["un", "im", "il"]:
+                print("Prefix added to create opposite meaning.")
+
+    if not found:
+        print("\nWord not found in morphology table.")
+
+# --------------------------------------------
+# Main Program
+# --------------------------------------------
+
+print("========== MORPHOLOGY PROGRAM ==========")
+
+while True:
+
+    print("\nAvailable Words:")
+    print("cat, bus, baby, box")
+    print("play, make, study, dance")
+    print("happy, legal, possible")
+
+    word = input("\nEnter a root word : ")
+
+    morphology(word)
+
+    choice = input("\nDo you want to continue? (yes/no): ")
+
+    if choice.lower() != "yes":
+        break
+
+print("\nProgram Ended Successfully!")
